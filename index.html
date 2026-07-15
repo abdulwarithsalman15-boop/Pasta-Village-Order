@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pasta Village — Order</title>
+<style>
+  :root {
+    --brand: #c0392b;
+    --brand-dark: #922b21;
+    --bg: #fdf6f0;
+    --card: #ffffff;
+    --text: #2b2b2b;
+    --muted: #767676;
+    --border: #e6ddd4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 16px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 1.5rem; margin: 0 0 4px; color: var(--brand-dark); }
+  header p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .card h2 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--brand-dark);
+    margin: 0 0 12px;
+  }
+  label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  input[type="text"], input[type="tel"], input[type="number"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #fff;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  .hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  .radio-row, .check-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .radio-row:last-child, .check-row:last-child { border-bottom: none; }
+  .radio-row label, .check-row label {
+    margin: 0;
+    font-weight: 500;
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .price-tag { color: var(--muted); font-weight: 400; font-size: 0.88rem; }
+  input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+  .hidden { display: none !important; }
+  #locBtn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--brand);
+    background: #fff;
+    color: var(--brand-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  #locStatus { font-size: 0.82rem; margin-top: 6px; color: var(--muted); }
+  .qty-row { display: flex; align-items: center; gap: 12px; }
+  .qty-row button {
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+    background: #fff; font-size: 1.2rem; line-height: 1;
+  }
+  .qty-row input { text-align: center; width: 60px; }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.92rem;
+    padding: 5px 0;
+  }
+  .summary-row.total {
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    padding-top: 10px;
+  }
+  .strike { text-decoration: line-through; color: var(--muted); margin-right: 6px; }
+  .free-tag { color: #1e8449; font-weight: 700; }
+  #submitBtn {
+    width: 100%;
+    padding: 14px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #submitBtn:disabled { opacity: 0.6; }
+  .error { color: var(--brand); font-size: 0.85rem; margin-top: 6px; display: none; }
+  /* Confirmation screen */
+  #confirmScreen { text-align: center; }
+  #confirmScreen .code {
+    font-size: 2rem;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+    color: var(--brand-dark);
+    background: #fdf1ee;
+    border: 2px dashed var(--brand);
+    border-radius: 10px;
+    padding: 14px;
+    margin: 14px 0;
+  }
+  .copy-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin: 4px 4px;
+  }
+  .bank-box {
+    text-align: left;
+    background: #f7f3ee;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 14px 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  .warn-box {
+    background: #fdf3e0;
+    border: 1px solid #eec87a;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    color: #7a5b00;
+    margin-top: 12px;
+    text-align: left;
+  }
+  a.wa-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #1e8449;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Pasta Village</h1>
+    <p>Everyone is a king — you should eat like one.</p>
+  </header>
+
+  <form id="orderForm">
+
+    <div class="card">
+      <h2>Your Details</h2>
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="field">
+        <label for="whatsapp">WhatsApp Number</label>
+        <input type="tel" id="whatsapp" placeholder="080..." required>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Delivery Location</h2>
+      <div class="radio-row">
+        <input type="radio" name="locType" id="locHostel" value="hostel" checked>
+        <label for="locHostel">Inside school (hostel)</label>
+      </div>
+      <div class="radio-row">
+        <input type="radio" name="locType" id="locOutside" value="outside">
+        <label for="locOutside">Outside school</label>
+      </div>
+
+      <div id="hostelFields" style="margin-top:14px;">
+        <div class="field">
+          <label for="hostel">Hostel Name</label>
+          <input type="text" id="hostel">
+        </div>
+        <div class="field">
+          <label for="room">Room Number <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+          <input type="text" id="room">
+        </div>
+      </div>
+
+      <div id="outsideFields" class="hidden" style="margin-top:14px;">
+        <button type="button" id="locBtn">📍 Use my current location</button>
+        <div id="locStatus"></div>
+        <div class="field" style="margin-top:12px;">
+          <label for="address">Or type your address</label>
+          <textarea id="address" placeholder="Street, landmark, area..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your Order</h2>
+      <div class="field">
+        <label>Asun Spag Combo</label>
+        <div class="hint" style="margin-bottom:8px;">Includes free plantain, egg &amp; cabbage — deselect any you don't want.</div>
+        <div class="qty-row">
+          <button type="button" id="qtyMinus">−</button>
+          <input type="number" id="qty" value="1" min="1" max="20" readonly>
+          <button type="button" id="qtyPlus">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Free Gifts (included)</label>
+        <div class="check-row">
+          <input type="checkbox" id="giftPlantain" checked>
+          <label for="giftPlantain">Plantain <span class="price-tag">Free</span></label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="giftEgg" checked>
+          <label for="giftEgg">Egg <span class="price-tag">Free</span></label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="giftCabbage" checked>
+          <label for="giftCabbage">Cabbage <span class="price-tag">Free</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Extras (per plate)</label>
+        <div class="check-row">
+          <input type="checkbox" class="extra" id="extraBeef" data-price="500">
+          <label for="extraBeef">Sumptuous Beef <span class="price-tag">+₦500</span></label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" class="extra" id="extraChicken" data-price="1500">
+          <label for="extraChicken">Exotic Chicken <span class="price-tag">+₦1,500</span></label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" class="extra" id="extraTurkey" data-price="2000">
+          <label for="extraTurkey">Holy Turkey <span class="price-tag">+₦2,000</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Order Summary</h2>
+      <div class="summary-row"><span id="qtyLabel">1 × Asun Spag Combo</span><span id="subtotalDisplay">₦2,500</span></div>
+      <div class="summary-row"><span>Delivery</span><span><span class="strike">₦500</span><span class="free-tag">FREE</span></span></div>
+      <div class="summary-row total"><span>Total to Pay</span><span id="totalDisplay">₦2,500</span></div>
+    </div>
+
+    <button type="submit" id="submitBtn">Place Order</button>
+    <div class="error" id="formError"></div>
+  </form>
+
+  <div class="card hidden" id="confirmScreen">
+    <h2>Order Received!</h2>
+    <p>Send your payment and put this code in the transfer description:</p>
+    <div class="code" id="codeDisplay">PV0000</div>
+    <button type="button" class="copy-btn" id="copyCodeBtn">Copy Code</button>
+
+    <div class="bank-box">
+      <strong>Amount:</strong> <span id="confirmTotal">₦2,500</span><br>
+      <strong>Bank:</strong> Opay<br>
+      <strong>Account Number:</strong> 7034161551<br>
+      <strong>Account Name:</strong> Abdul Warith Salman
+    </div>
+    <button type="button" class="copy-btn" id="copyAcctBtn">Copy Account Number</button>
+
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:14px;">
+      We'll confirm your order within 10 minutes of receiving payment with your code.
+    </p>
+    <div id="submitWarn" class="warn-box hidden">
+      We couldn't reach our order sheet automatically. Please also send a screenshot of this
+      screen to us on WhatsApp so we don't miss your order.
+    </div>
+    <a class="wa-link hidden" id="waLink" href="#" target="_blank">Message us on WhatsApp →</a>
+  </div>
+
+</div>
+
+<script>
+  // ---- CONFIGURE THESE TWO LINES ----
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPT7AuqZBmW2tg86uZcxa6yrDStHsz5pyaaBmuep6WV13R-VLQeY5nsebAAjlco0RzyQ/exec";
+  const BUSINESS_WHATSAPP = ""; // e.g. "2348012345678" — leave blank to hide the WhatsApp fallback link
+  // -----------------------------------
+
+  const BASE_PRICE = 2500;
+
+  const qtyInput = document.getElementById('qty');
+  const qtyMinus = document.getElementById('qtyMinus');
+  const qtyPlus = document.getElementById('qtyPlus');
+  const extraChecks = document.querySelectorAll('.extra');
+  const qtyLabel = document.getElementById('qtyLabel');
+  const subtotalDisplay = document.getElementById('subtotalDisplay');
+  const totalDisplay = document.getElementById('totalDisplay');
+
+  function currency(n) {
+    return '₦' + n.toLocaleString('en-NG');
+  }
+
+  function recalc() {
+    const qty = parseInt(qtyInput.value, 10) || 1;
+    let extrasSum = 0;
+    extraChecks.forEach(c => { if (c.checked) extrasSum += parseInt(c.dataset.price, 10); });
+    const perPlate = BASE_PRICE + extrasSum;
+    const total = perPlate * qty;
+    qtyLabel.textContent = qty + ' × Asun Spag Combo';
+    subtotalDisplay.textContent = currency(total);
+    totalDisplay.textContent = currency(total);
+    return total;
+  }
+
+  qtyMinus.addEventListener('click', () => {
+    qtyInput.value = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1);
+    recalc();
+  });
+  qtyPlus.addEventListener('click', () => {
+    qtyInput.value = Math.min(20, (parseInt(qtyInput.value, 10) || 1) + 1);
+    recalc();
+  });
+  extraChecks.forEach(c => c.addEventListener('change', recalc));
+  recalc();
+
+  // Location toggle
+  const locHostel = document.getElementById('locHostel');
+  const locOutside = document.getElementById('locOutside');
+  const hostelFields = document.getElementById('hostelFields');
+  const outsideFields = document.getElementById('outsideFields');
+
+  function toggleLocationFields() {
+    if (locHostel.checked) {
+      hostelFields.classList.remove('hidden');
+      outsideFields.classList.add('hidden');
+    } else {
+      hostelFields.classList.add('hidden');
+      outsideFields.classList.remove('hidden');
+    }
+  }
+  locHostel.addEventListener('change', toggleLocationFields);
+  locOutside.addEventListener('change', toggleLocationFields);
+
+  // GPS capture
+  let capturedCoords = null;
+  const locBtn = document.getElementById('locBtn');
+  const locStatus = document.getElementById('locStatus');
+  locBtn.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      locStatus.textContent = 'Location not supported on this device — please type your address below.';
+      return;
+    }
+    locStatus.textContent = 'Detecting your location…';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        capturedCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        locStatus.textContent = '✓ Location captured (' + capturedCoords.lat.toFixed(5) + ', ' + capturedCoords.lng.toFixed(5) + ')';
+      },
+      () => {
+        capturedCoords = null;
+        locStatus.textContent = 'Could not get your location — please type your address below.';
+      }
+    );
+  });
+
+  // Unique code generator (avoids ambiguous chars like 0/O/1/I)
+  function generateCode() {
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+    let code = 'PV';
+    const arr = new Uint8Array(5);
+    (window.crypto || window.msCrypto).getRandomValues(arr);
+    for (let i = 0; i < 5; i++) code += chars[arr[i] % chars.length];
+    return code;
+  }
+
+  const form = document.getElementById('orderForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const formError = document.getElementById('formError');
+  const confirmScreen = document.getElementById('confirmScreen');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formError.style.display = 'none';
+
+    const name = document.getElementById('name').value.trim();
+    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const isHostel = locHostel.checked;
+    const hostel = document.getElementById('hostel').value.trim();
+    const room = document.getElementById('room').value.trim();
+    const address = document.getElementById('address').value.trim();
+
+    if (!name || !whatsapp) {
+      formError.textContent = 'Please fill in your name and WhatsApp number.';
+      formError.style.display = 'block';
+      return;
+    }
+    if (isHostel && !hostel) {
+      formError.textContent = 'Please tell us your hostel name.';
+      formError.style.display = 'block';
+      return;
+    }
+    if (!isHostel && !capturedCoords && !address) {
+      formError.textContent = 'Please share your location or type your address.';
+      formError.style.display = 'block';
+      return;
+    }
+
+    const declinedGifts = [];
+    if (!document.getElementById('giftPlantain').checked) declinedGifts.push('Plantain');
+    if (!document.getElementById('giftEgg').checked) declinedGifts.push('Egg');
+    if (!document.getElementById('giftCabbage').checked) declinedGifts.push('Cabbage');
+
+    const extras = [];
+    extraChecks.forEach(c => { if (c.checked) extras.push(c.parentElement.textContent.trim().split('+')[0].trim()); });
+
+    const total = recalc();
+    const code = generateCode();
+
+    const payload = {
+      code, name, whatsapp,
+      locationType: isHostel ? 'Hostel' : 'Outside',
+      hostel: isHostel ? hostel : '',
+      room: isHostel ? room : '',
+      address: !isHostel ? address : '',
+      gps: capturedCoords ? (capturedCoords.lat + ',' + capturedCoords.lng) : '',
+      quantity: qtyInput.value,
+      declinedGifts,
+      extras,
+      total
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Placing order…';
+
+    let sheetOk = true;
+    try {
+      if (SCRIPT_URL && !SCRIPT_URL.includes('PASTE_YOUR')) {
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+      } else {
+        sheetOk = false;
+      }
+    } catch (err) {
+      sheetOk = false;
+    }
+
+    document.getElementById('codeDisplay').textContent = code;
+    document.getElementById('confirmTotal').textContent = currency(total);
+    form.classList.add('hidden');
+    confirmScreen.classList.remove('hidden');
+
+    if (!sheetOk) {
+      document.getElementById('submitWarn').classList.remove('hidden');
+    }
+
+    if (BUSINESS_WHATSAPP) {
+      const msg = encodeURIComponent(
+        'Pasta Village Order\nCode: ' + code + '\nName: ' + name + '\nTotal: ' + currency(total)
+      );
+      const waLink = document.getElementById('waLink');
+      waLink.href = 'https://wa.me/' + BUSINESS_WHATSAPP + '?text=' + msg;
+      waLink.classList.remove('hidden');
+    }
+  });
+
+  document.getElementById('copyCodeBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('codeDisplay').textContent);
+  });
+  document.getElementById('copyAcctBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText('7034161551');
+  });
+</script>
+</body>
+</html>
