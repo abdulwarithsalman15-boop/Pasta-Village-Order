@@ -13,6 +13,7 @@
     --text: #2b2b2b;
     --muted: #767676;
     --border: #e6ddd4;
+    --ok: #1e8449;
   }
   * { box-sizing: border-box; }
   body {
@@ -48,7 +49,7 @@
   }
   .field { margin-bottom: 14px; }
   .field:last-child { margin-bottom: 0; }
-  input[type="text"], input[type="tel"], input[type="number"], textarea {
+  input[type="text"], input[type="tel"], input[type="email"], input[type="number"], textarea {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--border);
@@ -76,6 +77,28 @@
     align-items: center;
   }
   .price-tag { color: var(--muted); font-weight: 400; font-size: 0.88rem; }
+  .check-row.unavailable label, .radio-row.unavailable label { color: var(--muted); }
+  .notice {
+    background: #fff8e6;
+    border: 1px solid #f0d58c;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .notice.welcome { background: #eef8f1; border-color: #a9d8b8; }
+  .link-btn {
+    display: block;
+    margin-top: 6px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--brand-dark);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
   input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
   .hidden { display: none !important; }
   #locBtn {
@@ -95,6 +118,19 @@
     background: #fff; font-size: 1.2rem; line-height: 1;
   }
   .qty-row input { text-align: center; width: 60px; }
+  .dish-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dish-row:last-child { border-bottom: none; }
+  .dish-name { font-weight: 500; font-size: 0.92rem; }
+  .dish-name .price-tag { display: block; }
+  .dish-row .qty-row { gap: 8px; flex-shrink: 0; }
+  .dish-row .qty-row input { width: 48px; padding: 8px 4px; }
   .summary-row {
     display: flex;
     justify-content: space-between;
@@ -109,8 +145,9 @@
     padding-top: 10px;
   }
   .strike { text-decoration: line-through; color: var(--muted); margin-right: 6px; }
-  .free-tag { color: #1e8449; font-weight: 700; }
-  #submitBtn {
+  .free-tag { color: var(--ok); font-weight: 700; }
+  .btn {
+    display: block;
     width: 100%;
     padding: 14px;
     background: var(--brand);
@@ -120,32 +157,18 @@
     font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
+    text-align: center;
+    text-decoration: none;
   }
-  #submitBtn:disabled { opacity: 0.6; }
-  .error { color: var(--brand); font-size: 0.85rem; margin-top: 6px; display: none; }
-  /* Confirmation screen */
-  #confirmScreen { text-align: center; }
-  #confirmScreen .code {
-    font-size: 2rem;
-    letter-spacing: 0.08em;
-    font-weight: 800;
-    color: var(--brand-dark);
-    background: #fdf1ee;
-    border: 2px dashed var(--brand);
-    border-radius: 10px;
-    padding: 14px;
-    margin: 14px 0;
-  }
-  .copy-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: #fff;
-    font-size: 0.85rem;
-    cursor: pointer;
-    margin: 4px 4px;
-  }
-  .bank-box {
+  .btn:disabled { opacity: 0.6; }
+  .btn.secondary { background: #fff; color: var(--brand-dark); border: 1px solid var(--brand); margin-top: 10px; }
+  .secure-note { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+  .error { color: var(--brand); font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; }
+  /* Result screens */
+  .result { text-align: center; }
+  .result .icon { font-size: 2.6rem; line-height: 1; margin-bottom: 8px; }
+  .result h2 { font-size: 1.2rem; text-transform: none; letter-spacing: 0; }
+  .order-box {
     text-align: left;
     background: #f7f3ee;
     border-radius: 8px;
@@ -154,24 +177,45 @@
     font-size: 0.95rem;
     line-height: 1.7;
   }
-  .warn-box {
-    background: #fdf3e0;
-    border: 1px solid #eec87a;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 0.85rem;
-    color: #7a5b00;
-    margin-top: 12px;
-    text-align: left;
-  }
+  .order-code { font-weight: 800; letter-spacing: 0.06em; color: var(--brand-dark); }
+  .muted { color: var(--muted); font-size: 0.88rem; }
   a.wa-link {
     display: inline-block;
-    margin-top: 10px;
-    color: #1e8449;
+    margin-top: 12px;
+    color: var(--ok);
     font-weight: 600;
     text-decoration: none;
     font-size: 0.9rem;
   }
+  .contact-btn {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+  .contact-btn small { display: block; font-weight: 400; font-size: 0.8rem; margin-top: 2px; opacity: 0.85; }
+  .contact-btn.official { background: #25d366; color: #0b3d1f; }
+  .contact-btn.ceo { background: #fff; color: var(--brand-dark); border: 1px solid var(--brand); }
+  .qr-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .qr-box img { width: 120px; height: 120px; flex-shrink: 0; }
+  /* A phone can't scan its own screen, so only show the QR code on bigger screens */
+  @media (max-width: 600px) { .qr-box { display: none; } }
+  .spinner {
+    width: 36px; height: 36px; margin: 6px auto 12px;
+    border: 4px solid var(--border); border-top-color: var(--brand);
+    border-radius: 50%; animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -182,17 +226,38 @@
     <p>Everyone is a king — you should eat like one.</p>
   </header>
 
-  <form id="orderForm">
+  <form id="orderForm" novalidate>
+
+    <div class="notice" id="firstTimeNote">
+      <strong>First time here? 👋</strong> Fill in your details just once — next time you order on
+      this phone, we'll fill them in for you automatically.
+    </div>
+    <div class="notice welcome hidden" id="welcomeNote">
+      <strong id="welcomeTitle">Welcome back! 👋</strong> We've filled in your details from last time —
+      just check them and pick your order.
+      <button type="button" class="link-btn" id="forgetBtn">Not you? Clear details</button>
+    </div>
 
     <div class="card">
       <h2>Your Details</h2>
       <div class="field">
         <label for="name">Full Name</label>
-        <input type="text" id="name" required>
+        <input type="text" id="name" autocomplete="name" required>
       </div>
       <div class="field">
-        <label for="whatsapp">WhatsApp Number</label>
-        <input type="tel" id="whatsapp" placeholder="080..." required>
+        <label for="phone">Phone Number (for calls)</label>
+        <input type="tel" id="phone" placeholder="080..." autocomplete="tel" required>
+        <div class="hint">We'll call this number when we're delivering your order.</div>
+      </div>
+      <div class="field">
+        <label for="whatsapp">WhatsApp Number <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+        <input type="tel" id="whatsapp" placeholder="080...">
+        <div class="hint">So we can send you your order confirmation, delivery updates and special offers.</div>
+      </div>
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+        <div class="hint">Your payment receipt will be sent here.</div>
       </div>
     </div>
 
@@ -202,10 +267,13 @@
         <input type="radio" name="locType" id="locHostel" value="hostel" checked>
         <label for="locHostel">Inside school (hostel)</label>
       </div>
-      <div class="radio-row">
-        <input type="radio" name="locType" id="locOutside" value="outside">
-        <label for="locOutside">Outside school</label>
+      <!-- Outside-school delivery is switched off for now. To turn it back on: remove "disabled" and the
+           "unavailable" class below, and set OUTSIDE_SCHOOL_ENABLED = true in apps-script.gs. -->
+      <div class="radio-row unavailable">
+        <input type="radio" name="locType" id="locOutside" value="outside" disabled>
+        <label for="locOutside">Outside school <span class="price-tag">Coming soon</span></label>
       </div>
+      <div class="hint" style="margin-top:6px;">We're delivering to school hostels only for now — delivery outside school is coming soon!</div>
 
       <div id="hostelFields" style="margin-top:14px;">
         <div class="field">
@@ -231,273 +299,410 @@
     <div class="card">
       <h2>Your Order</h2>
       <div class="field">
-        <label>Asun Spag Combo</label>
-        <div class="hint" style="margin-bottom:8px;">Includes free plantain, egg &amp; cabbage — deselect any you don't want.</div>
-        <div class="qty-row">
-          <button type="button" id="qtyMinus">−</button>
-          <input type="number" id="qty" value="1" min="1" max="20" readonly>
-          <button type="button" id="qtyPlus">+</button>
+        <label>Choose your spag</label>
+        <div class="hint" style="margin-bottom:8px;">₦2,500 a plate — comes with free plantain and free delivery.</div>
+        <!-- If you change a dish name or price here, change it in apps-script.gs too (DISHES). -->
+        <div class="dish-row">
+          <span class="dish-name">Chicken Stir-fry Spag <span class="price-tag">₦2,500</span></span>
+          <div class="qty-row">
+            <button type="button" class="qty-btn" data-dish="chicken" data-step="-1" aria-label="One less Chicken Stir-fry Spag">−</button>
+            <input type="number" class="dish-qty" id="qtyChicken" data-id="chicken" data-name="Chicken Stir-fry Spag" data-price="2500" value="1" min="0" max="20" readonly aria-label="Chicken Stir-fry Spag plates">
+            <button type="button" class="qty-btn" data-dish="chicken" data-step="1" aria-label="One more Chicken Stir-fry Spag">+</button>
+          </div>
+        </div>
+        <div class="dish-row">
+          <span class="dish-name">Beef Stir-fry Spag <span class="price-tag">₦2,500</span></span>
+          <div class="qty-row">
+            <button type="button" class="qty-btn" data-dish="beef" data-step="-1" aria-label="One less Beef Stir-fry Spag">−</button>
+            <input type="number" class="dish-qty" id="qtyBeef" data-id="beef" data-name="Beef Stir-fry Spag" data-price="2500" value="0" min="0" max="20" readonly aria-label="Beef Stir-fry Spag plates">
+            <button type="button" class="qty-btn" data-dish="beef" data-step="1" aria-label="One more Beef Stir-fry Spag">+</button>
+          </div>
         </div>
       </div>
 
       <div class="field">
-        <label>Free Gifts (included)</label>
+        <label>Free Gift (included)</label>
         <div class="check-row">
-          <input type="checkbox" id="giftPlantain" checked>
+          <input type="checkbox" class="gift" id="giftPlantain" data-id="plantain" checked>
           <label for="giftPlantain">Plantain <span class="price-tag">Free</span></label>
         </div>
-        <div class="check-row">
-          <input type="checkbox" id="giftEgg" checked>
-          <label for="giftEgg">Egg <span class="price-tag">Free</span></label>
-        </div>
-        <div class="check-row">
-          <input type="checkbox" id="giftCabbage" checked>
-          <label for="giftCabbage">Cabbage <span class="price-tag">Free</span></label>
-        </div>
+        <div class="hint">Untick if you don't want plantain.</div>
       </div>
 
       <div class="field">
         <label>Extras (per plate)</label>
+        <!-- If you change a price here, change it in apps-script.gs too (EXTRAS) — that one is what customers are charged.
+             To make an item unavailable: add "disabled" to its checkbox and set available:false in apps-script.gs. -->
         <div class="check-row">
-          <input type="checkbox" class="extra" id="extraBeef" data-price="500">
+          <input type="checkbox" class="extra" id="extraEgg" data-id="egg" data-price="300">
+          <label for="extraEgg">Egg <span class="price-tag">+₦300</span></label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" class="extra" id="extraBeef" data-id="beef" data-price="500">
           <label for="extraBeef">Sumptuous Beef <span class="price-tag">+₦500</span></label>
         </div>
         <div class="check-row">
-          <input type="checkbox" class="extra" id="extraChicken" data-price="1500">
-          <label for="extraChicken">Exotic Chicken <span class="price-tag">+₦1,500</span></label>
+          <input type="checkbox" class="extra" id="extraChicken" data-id="chicken" data-price="1000">
+          <label for="extraChicken">Exotic Chicken <span class="price-tag">+₦1,000</span></label>
         </div>
-        <div class="check-row">
-          <input type="checkbox" class="extra" id="extraTurkey" data-price="2000">
-          <label for="extraTurkey">Holy Turkey <span class="price-tag">+₦2,000</span></label>
+        <div class="check-row unavailable">
+          <input type="checkbox" class="extra" id="extraTurkey" data-id="turkey" data-price="1500" disabled>
+          <label for="extraTurkey">Holy Turkey <span class="price-tag"><span class="strike">₦1,500</span> Unavailable</span></label>
         </div>
       </div>
     </div>
 
     <div class="card">
       <h2>Order Summary</h2>
-      <div class="summary-row"><span id="qtyLabel">1 × Asun Spag Combo</span><span id="subtotalDisplay">₦2,500</span></div>
+      <div id="summaryItems"><div class="summary-row"><span>1 × Chicken Stir-fry Spag</span><span>₦2,500</span></div></div>
       <div class="summary-row"><span>Delivery</span><span><span class="strike">₦500</span><span class="free-tag">FREE</span></span></div>
       <div class="summary-row total"><span>Total to Pay</span><span id="totalDisplay">₦2,500</span></div>
     </div>
 
-    <button type="submit" id="submitBtn">Place Order</button>
-    <div class="error" id="formError"></div>
+    <button type="submit" class="btn" id="submitBtn">Pay ₦2,500</button>
+    <div class="secure-note">🔒 Secure payment by Paystack — card, bank transfer or USSD</div>
+    <div class="error" id="formError" role="alert"></div>
   </form>
 
-  <div class="card hidden" id="confirmScreen">
-    <h2>Order Received!</h2>
-    <p>Send your payment and put this code in the transfer description:</p>
-    <div class="code" id="codeDisplay">PV0000</div>
-    <button type="button" class="copy-btn" id="copyCodeBtn">Copy Code</button>
+  <!-- Shown while we check the payment after Paystack sends the customer back -->
+  <div class="card result hidden" id="checkingScreen">
+    <div class="spinner"></div>
+    <h2>Confirming your payment…</h2>
+    <p class="muted">This only takes a few seconds. Please don't close this page.</p>
+  </div>
 
-    <div class="bank-box">
-      <strong>Amount:</strong> <span id="confirmTotal">₦2,500</span><br>
-      <strong>Bank:</strong> Opay<br>
-      <strong>Account Number:</strong> 7034161551<br>
-      <strong>Account Name:</strong> Abdul Warith Salman
+  <!-- Payment confirmed -->
+  <div class="card result hidden" id="thanksScreen">
+    <div class="icon">🎉</div>
+    <h2 id="thanksTitle">Thank you for ordering from Pasta Village!</h2>
+    <p>Your payment has been received and your order is confirmed.</p>
+    <div class="order-box">
+      <strong>Order code:</strong> <span class="order-code" id="tCode"></span><br>
+      <strong>Order:</strong> <span id="tOrder"></span><br>
+      <strong>Amount paid:</strong> <span id="tTotal"></span>
     </div>
-    <button type="button" class="copy-btn" id="copyAcctBtn">Copy Account Number</button>
+    <p class="muted">We're preparing your food now and will call you when we're delivering.
+      A receipt has been sent to your email.</p>
+    <a class="wa-link hidden" id="waThanks" target="_blank" rel="noopener">Message us on WhatsApp →</a>
+    <a class="btn secondary" href="./" id="newOrderBtn">Place another order</a>
+  </div>
 
-    <p style="font-size:0.85rem;color:var(--muted);margin-top:14px;">
-      We'll confirm your order within 10 minutes of receiving payment with your code.
-    </p>
-    <div id="submitWarn" class="warn-box hidden">
-      We couldn't reach our order sheet automatically. Please also send a screenshot of this
-      screen to us on WhatsApp so we don't miss your order.
+  <!-- Payment not completed / problem -->
+  <div class="card result hidden" id="notPaidScreen">
+    <div class="icon">⚠️</div>
+    <h2>Payment not completed</h2>
+    <p id="notPaidMsg">Your order is saved, but we haven't received the payment yet.</p>
+    <div class="order-box" id="notPaidBox">
+      <strong>Order code:</strong> <span class="order-code" id="nCode"></span><br>
+      <strong>Amount:</strong> <span id="nTotal"></span>
     </div>
-    <a class="wa-link hidden" id="waLink" href="#" target="_blank">Message us on WhatsApp →</a>
+    <button type="button" class="btn" id="retryBtn">Try paying again</button>
+    <button type="button" class="btn secondary" id="recheckBtn">I've paid — check again</button>
+    <a class="btn secondary" href="./">Start a new order</a>
+    <div class="error" id="notPaidError" role="alert"></div>
+    <a class="wa-link hidden" id="waNotPaid" target="_blank" rel="noopener">Need help? Message us on WhatsApp →</a>
+  </div>
+
+  <!-- Always visible: contact Pasta Village or the CEO -->
+  <div class="card contact">
+    <h2>Talk to Us</h2>
+    <a class="contact-btn official" id="officialLink" target="_blank" rel="noopener"
+       href="https://wa.link/p9a6cx">
+      💬 Chat with Pasta Village
+      <small>Questions about your order or delivery — 0704 955 7570</small>
+    </a>
+    <a class="contact-btn ceo" target="_blank" rel="noopener" href="https://shorturl.at/RIAgM">
+      📝 Complaints or suggestions? Message the CEO
+      <small>We read every message and want to hear from you</small>
+    </a>
+    <div class="qr-box">
+      <img src="whatsapp-qr.png" width="160" height="160" alt="QR code to chat with Pasta Village on WhatsApp">
+      <div>Scan with your phone camera to chat with Pasta Village on WhatsApp</div>
+    </div>
+    <p class="muted" style="margin:12px 0 0;text-align:center;">✉️ thepastavillage@gmail.com · 📍 Aluta market, FUTA</p>
   </div>
 
 </div>
 
 <script>
-  // ---- CONFIGURE THESE TWO LINES ----
+  // ---- SETTINGS ----
+  // Google Apps Script web app address — do not change unless you redeploy as a NEW deployment.
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPT7AuqZBmW2tg86uZcxa6yrDStHsz5pyaaBmuep6WV13R-VLQeY5nsebAAjlco0RzyQ/exec";
-  const BUSINESS_WHATSAPP = ""; // e.g. "2348012345678" — leave blank to hide the WhatsApp fallback link
-  // -----------------------------------
+  const BUSINESS_WHATSAPP = "2347049557570"; // official Pasta Village line (0704 955 7570) — "" hides the WhatsApp links
+  // Prices shown here are for display only. The real prices are in apps-script.gs — keep them the same.
+  const MAX_PLATES = 20;
+  // ------------------
 
-  const BASE_PRICE = 2500;
-
-  const qtyInput = document.getElementById('qty');
-  const qtyMinus = document.getElementById('qtyMinus');
-  const qtyPlus = document.getElementById('qtyPlus');
+  const $ = id => document.getElementById(id);
+  const dishInputs = document.querySelectorAll('.dish-qty');
   const extraChecks = document.querySelectorAll('.extra');
-  const qtyLabel = document.getElementById('qtyLabel');
-  const subtotalDisplay = document.getElementById('subtotalDisplay');
-  const totalDisplay = document.getElementById('totalDisplay');
+  const giftChecks = document.querySelectorAll('.gift');
 
   function currency(n) {
-    return '₦' + n.toLocaleString('en-NG');
+    return '₦' + Number(n).toLocaleString('en-NG');
+  }
+
+  function show(id) {
+    ['orderForm', 'checkingScreen', 'thanksScreen', 'notPaidScreen'].forEach(s =>
+      $(s).classList.toggle('hidden', s !== id));
+    window.scrollTo(0, 0);
+  }
+
+  async function callBackend(payload) {
+    // Sent as plain text so the browser doesn't need extra permission checks with Google.
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  function setupWhatsApp(linkId, text) {
+    if (!BUSINESS_WHATSAPP) return;
+    const a = $(linkId);
+    a.href = 'https://wa.me/' + BUSINESS_WHATSAPP + '?text=' + encodeURIComponent(text);
+    a.classList.remove('hidden');
+  }
+
+  // ---- Price display ----
+  function plateCount() {
+    let n = 0;
+    dishInputs.forEach(i => { n += parseInt(i.value, 10) || 0; });
+    return n;
+  }
+
+  function summaryRow(left, right) {
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+    const a = document.createElement('span'); a.textContent = left;
+    const b = document.createElement('span'); b.textContent = right;
+    row.append(a, b);
+    return row;
   }
 
   function recalc() {
-    const qty = parseInt(qtyInput.value, 10) || 1;
-    let extrasSum = 0;
-    extraChecks.forEach(c => { if (c.checked) extrasSum += parseInt(c.dataset.price, 10); });
-    const perPlate = BASE_PRICE + extrasSum;
-    const total = perPlate * qty;
-    qtyLabel.textContent = qty + ' × Asun Spag Combo';
-    subtotalDisplay.textContent = currency(total);
-    totalDisplay.textContent = currency(total);
+    const plates = plateCount();
+    const box = $('summaryItems');
+    box.replaceChildren();
+    let total = 0;
+    dishInputs.forEach(i => {
+      const n = parseInt(i.value, 10) || 0;
+      if (!n) return;
+      const cost = n * parseInt(i.dataset.price, 10);
+      total += cost;
+      box.append(summaryRow(n + ' × ' + i.dataset.name, currency(cost)));
+    });
+    extraChecks.forEach(c => {
+      if (!c.checked || c.disabled || !plates) return;
+      const cost = plates * parseInt(c.dataset.price, 10);
+      total += cost;
+      const label = c.parentElement.querySelector('label').firstChild.textContent.trim();
+      box.append(summaryRow(label + ' × ' + plates, currency(cost)));
+    });
+    if (!plates) box.append(summaryRow('No plates selected yet', '—'));
+    $('totalDisplay').textContent = currency(total);
+    $('submitBtn').textContent = plates ? 'Pay ' + currency(total) : 'Choose your spag';
+    $('submitBtn').disabled = !plates;
     return total;
   }
 
-  qtyMinus.addEventListener('click', () => {
-    qtyInput.value = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1);
+  document.querySelectorAll('.qty-btn').forEach(btn => btn.addEventListener('click', () => {
+    const input = document.querySelector('.dish-qty[data-id="' + btn.dataset.dish + '"]');
+    const step = parseInt(btn.dataset.step, 10);
+    const current = parseInt(input.value, 10) || 0;
+    if (step > 0 && plateCount() >= MAX_PLATES) return;
+    input.value = Math.max(0, current + step);
     recalc();
-  });
-  qtyPlus.addEventListener('click', () => {
-    qtyInput.value = Math.min(20, (parseInt(qtyInput.value, 10) || 1) + 1);
-    recalc();
-  });
+  }));
   extraChecks.forEach(c => c.addEventListener('change', recalc));
   recalc();
 
-  // Location toggle
-  const locHostel = document.getElementById('locHostel');
-  const locOutside = document.getElementById('locOutside');
-  const hostelFields = document.getElementById('hostelFields');
-  const outsideFields = document.getElementById('outsideFields');
-
+  // ---- Location ----
+  const locHostel = $('locHostel');
   function toggleLocationFields() {
-    if (locHostel.checked) {
-      hostelFields.classList.remove('hidden');
-      outsideFields.classList.add('hidden');
-    } else {
-      hostelFields.classList.add('hidden');
-      outsideFields.classList.remove('hidden');
-    }
+    $('hostelFields').classList.toggle('hidden', !locHostel.checked);
+    $('outsideFields').classList.toggle('hidden', locHostel.checked);
   }
   locHostel.addEventListener('change', toggleLocationFields);
-  locOutside.addEventListener('change', toggleLocationFields);
+  $('locOutside').addEventListener('change', toggleLocationFields);
 
-  // GPS capture
   let capturedCoords = null;
-  const locBtn = document.getElementById('locBtn');
-  const locStatus = document.getElementById('locStatus');
-  locBtn.addEventListener('click', () => {
+  $('locBtn').addEventListener('click', () => {
+    const status = $('locStatus');
     if (!navigator.geolocation) {
-      locStatus.textContent = 'Location not supported on this device — please type your address below.';
+      status.textContent = 'Location not supported on this device — please type your address below.';
       return;
     }
-    locStatus.textContent = 'Detecting your location…';
+    status.textContent = 'Detecting your location…';
     navigator.geolocation.getCurrentPosition(
       pos => {
         capturedCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        locStatus.textContent = '✓ Location captured (' + capturedCoords.lat.toFixed(5) + ', ' + capturedCoords.lng.toFixed(5) + ')';
+        status.textContent = '✓ Location captured (' + capturedCoords.lat.toFixed(5) + ', ' + capturedCoords.lng.toFixed(5) + ')';
       },
       () => {
         capturedCoords = null;
-        locStatus.textContent = 'Could not get your location — please type your address below.';
-      }
+        status.textContent = 'Could not get your location — please type your address below.';
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
     );
   });
 
-  // Unique code generator (avoids ambiguous chars like 0/O/1/I)
-  function generateCode() {
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-    let code = 'PV';
-    const arr = new Uint8Array(5);
-    (window.crypto || window.msCrypto).getRandomValues(arr);
-    for (let i = 0; i < 5; i++) code += chars[arr[i] % chars.length];
-    return code;
+  // ---- Remember the customer's details on this phone for next time ----
+  // Stored only in this browser on the customer's own device; never sent anywhere else.
+  const SAVED_KEY = 'pastaVillageDetails';
+  const SAVED_FIELDS = ['name', 'phone', 'whatsapp', 'email', 'hostel', 'room', 'address'];
+
+  function saveDetails() {
+    const d = { locType: locHostel.checked ? 'hostel' : 'outside' };
+    SAVED_FIELDS.forEach(f => { d[f] = $(f).value.trim(); });
+    try { localStorage.setItem(SAVED_KEY, JSON.stringify(d)); } catch (e) { /* private mode etc. */ }
   }
 
-  const form = document.getElementById('orderForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const formError = document.getElementById('formError');
-  const confirmScreen = document.getElementById('confirmScreen');
+  function loadDetails() {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(SAVED_KEY) || 'null'); } catch (e) { d = null; }
+    if (!d || !d.name) return;
+    SAVED_FIELDS.forEach(f => { if (typeof d[f] === 'string') $(f).value = d[f]; });
+    if (d.locType === 'outside' && !$('locOutside').disabled) $('locOutside').checked = true; else locHostel.checked = true;
+    toggleLocationFields();
+    $('welcomeTitle').textContent = 'Welcome back, ' + d.name.split(' ')[0] + '! 👋';
+    $('firstTimeNote').classList.add('hidden');
+    $('welcomeNote').classList.remove('hidden');
+  }
+
+  $('forgetBtn').addEventListener('click', () => {
+    try { localStorage.removeItem(SAVED_KEY); } catch (e) {}
+    SAVED_FIELDS.forEach(f => { $(f).value = ''; });
+    locHostel.checked = true;
+    toggleLocationFields();
+    $('welcomeNote').classList.add('hidden');
+    $('firstTimeNote').classList.remove('hidden');
+    $('name').focus();
+  });
+
+  loadDetails();
+
+  // ---- Place order → Paystack ----
+  const form = $('orderForm');
+  const submitBtn = $('submitBtn');
+  const formError = $('formError');
+
+  function showFormError(msg) {
+    formError.textContent = msg;
+    formError.style.display = 'block';
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     formError.style.display = 'none';
 
-    const name = document.getElementById('name').value.trim();
-    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const name = $('name').value.trim();
+    const phone = $('phone').value.trim();
+    const whatsapp = $('whatsapp').value.trim();
+    const email = $('email').value.trim();
     const isHostel = locHostel.checked;
-    const hostel = document.getElementById('hostel').value.trim();
-    const room = document.getElementById('room').value.trim();
-    const address = document.getElementById('address').value.trim();
+    const hostel = $('hostel').value.trim();
+    const room = $('room').value.trim();
+    const address = $('address').value.trim();
 
-    if (!name || !whatsapp) {
-      formError.textContent = 'Please fill in your name and WhatsApp number.';
-      formError.style.display = 'block';
-      return;
-    }
-    if (isHostel && !hostel) {
-      formError.textContent = 'Please tell us your hostel name.';
-      formError.style.display = 'block';
-      return;
-    }
-    if (!isHostel && !capturedCoords && !address) {
-      formError.textContent = 'Please share your location or type your address.';
-      formError.style.display = 'block';
-      return;
-    }
+    if (!name) return showFormError('Please fill in your name.');
+    if (phone.replace(/\D/g, '').length < 10) return showFormError('Please enter a phone number we can call you on.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showFormError('Please enter a valid email address.');
+    if (isHostel && !hostel) return showFormError('Please tell us your hostel name.');
+    if (!isHostel && !capturedCoords && !address) return showFormError('Please share your location or type your address.');
+    if (!plateCount()) return showFormError('Please choose at least one plate of spag.');
 
-    const declinedGifts = [];
-    if (!document.getElementById('giftPlantain').checked) declinedGifts.push('Plantain');
-    if (!document.getElementById('giftEgg').checked) declinedGifts.push('Egg');
-    if (!document.getElementById('giftCabbage').checked) declinedGifts.push('Cabbage');
-
-    const extras = [];
-    extraChecks.forEach(c => { if (c.checked) extras.push(c.parentElement.textContent.trim().split('+')[0].trim()); });
-
-    const total = recalc();
-    const code = generateCode();
+    const dishes = {};
+    dishInputs.forEach(i => { const n = parseInt(i.value, 10) || 0; if (n) dishes[i.dataset.id] = n; });
 
     const payload = {
-      code, name, whatsapp,
+      action: 'create',
+      name, phone, whatsapp, email,
       locationType: isHostel ? 'Hostel' : 'Outside',
       hostel: isHostel ? hostel : '',
       room: isHostel ? room : '',
-      address: !isHostel ? address : '',
-      gps: capturedCoords ? (capturedCoords.lat + ',' + capturedCoords.lng) : '',
-      quantity: qtyInput.value,
-      declinedGifts,
-      extras,
-      total
+      address: isHostel ? '' : address,
+      gps: (!isHostel && capturedCoords) ? (capturedCoords.lat + ',' + capturedCoords.lng) : '',
+      dishes,
+      extras: [...extraChecks].filter(c => c.checked && !c.disabled).map(c => c.dataset.id),
+      declinedGifts: [...giftChecks].filter(c => !c.checked).map(c => c.dataset.id),
+      returnUrl: location.origin + location.pathname
     };
 
+    saveDetails(); // so next time the form is already filled in
+
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Placing order…';
+    submitBtn.textContent = 'Opening secure payment…';
 
-    let sheetOk = true;
     try {
-      if (SCRIPT_URL && !SCRIPT_URL.includes('PASTE_YOUR')) {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-      } else {
-        sheetOk = false;
-      }
+      const r = await callBackend(payload);
+      if (!r.ok || !r.paymentUrl) throw new Error(r.error || 'Could not start payment');
+      // Off to Paystack. They'll send the customer back here with ?reference=... when done.
+      location.href = r.paymentUrl;
     } catch (err) {
-      sheetOk = false;
-    }
-
-    document.getElementById('codeDisplay').textContent = code;
-    document.getElementById('confirmTotal').textContent = currency(total);
-    form.classList.add('hidden');
-    confirmScreen.classList.remove('hidden');
-
-    if (!sheetOk) {
-      document.getElementById('submitWarn').classList.remove('hidden');
-    }
-
-    if (BUSINESS_WHATSAPP) {
-      const msg = encodeURIComponent(
-        'Pasta Village Order\nCode: ' + code + '\nName: ' + name + '\nTotal: ' + currency(total)
-      );
-      const waLink = document.getElementById('waLink');
-      waLink.href = 'https://wa.me/' + BUSINESS_WHATSAPP + '?text=' + msg;
-      waLink.classList.remove('hidden');
+      submitBtn.disabled = false;
+      recalc();
+      showFormError((err && err.message && !/^HTTP|fetch|network/i.test(err.message))
+        ? err.message
+        : 'We couldn\'t connect. Please check your internet and try again.');
     }
   });
 
-  document.getElementById('copyCodeBtn').addEventListener('click', () => {
-    navigator.clipboard.writeText(document.getElementById('codeDisplay').textContent);
+  // ---- Back from Paystack: confirm the payment ----
+  let currentRef = null;
+
+  async function confirmPayment(ref) {
+    currentRef = ref;
+    show('checkingScreen');
+    $('notPaidError').style.display = 'none';
+    let r;
+    try {
+      r = await callBackend({ action: 'verify', reference: ref });
+    } catch (err) {
+      r = { ok: false, error: 'We couldn\'t reach our server to confirm your payment. Please check your internet and tap "check again".' };
+    }
+
+    if (r.ok && r.paid) {
+      $('thanksTitle').textContent = 'Thank you for ordering from Pasta Village' + (r.name ? ', ' + r.name.split(' ')[0] : '') + '!';
+      $('tCode').textContent = r.code;
+      $('tOrder').textContent = (r.dishes || (r.quantity + ' plate(s)')) + (r.extras ? ' + ' + r.extras : '');
+      $('tTotal').textContent = currency(r.total);
+      setupWhatsApp('waThanks', 'Hi Pasta Village! I just paid for order ' + r.code + '.');
+      show('thanksScreen');
+      return;
+    }
+
+    $('nCode').textContent = ref;
+    $('nTotal').textContent = r.total ? currency(r.total) : '—';
+    $('notPaidBox').classList.toggle('hidden', !r.ok);
+    $('retryBtn').classList.toggle('hidden', !r.ok);
+    $('notPaidMsg').textContent = r.ok
+      ? 'Your order is saved, but we haven\'t received the payment yet. If you cancelled, you can try again below.'
+      : r.error;
+    setupWhatsApp('waNotPaid', 'Hi Pasta Village, I need help with order ' + ref + '.');
+    show('notPaidScreen');
+  }
+
+  $('recheckBtn').addEventListener('click', () => currentRef && confirmPayment(currentRef));
+
+  $('retryBtn').addEventListener('click', async () => {
+    const btn = $('retryBtn');
+    btn.disabled = true;
+    btn.textContent = 'Opening secure payment…';
+    try {
+      const r = await callBackend({ action: 'resume', reference: currentRef });
+      if (r.ok && r.alreadyPaid) return confirmPayment(currentRef);
+      if (!r.ok || !r.paymentUrl) throw new Error(r.error || 'Could not reopen payment');
+      location.href = r.paymentUrl;
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Try paying again';
+      $('notPaidError').textContent = (err && err.message) || 'Something went wrong. Please try again.';
+      $('notPaidError').style.display = 'block';
+    }
   });
-  document.getElementById('copyAcctBtn').addEventListener('click', () => {
-    navigator.clipboard.writeText('7034161551');
-  });
+
+  const params = new URLSearchParams(location.search);
+  const returnedRef = params.get('reference') || params.get('trxref');
+  if (returnedRef) confirmPayment(returnedRef.trim().toUpperCase());
 </script>
 </body>
 </html>
