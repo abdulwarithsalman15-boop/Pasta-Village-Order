@@ -87,6 +87,27 @@
     font-size: 0.9rem;
     line-height: 1.5;
   }
+  .preorder-badge {
+    display: inline-block;
+    margin-top: 10px !important;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--brand-dark) !important;
+    font-weight: 600;
+    font-size: 0.82rem !important;
+  }
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--text);
+  }
   .notice.welcome { background: #eef8f1; border-color: #a9d8b8; }
   .link-btn {
     display: block;
@@ -225,6 +246,7 @@
   <header>
     <h1>Pasta Village</h1>
     <p>Everyone is a king — you should eat like one.</p>
+    <p class="preorder-badge">🗓️ Pre-order · We deliver on Friday &amp; Saturday nights</p>
   </header>
 
   <form id="orderForm" novalidate>
@@ -294,6 +316,20 @@
           <label for="address">Or type your address</label>
           <textarea id="address" placeholder="Street, landmark, area..."></textarea>
         </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Delivery Night</h2>
+      <div class="notice" style="margin-bottom:12px;">
+        <strong>This is a pre-order.</strong> We deliver on <strong>Friday and Saturday nights</strong> only,
+        and we can't deliver on the same day you order — so pick a night from tomorrow onwards.
+      </div>
+      <div class="field">
+        <label for="deliveryDate">When should we deliver?</label>
+        <select id="deliveryDate" required>
+          <option value="">Choose a delivery night…</option>
+        </select>
       </div>
     </div>
 
@@ -380,9 +416,10 @@
     <div class="order-box">
       <strong>Order code:</strong> <span class="order-code" id="tCode"></span><br>
       <strong>Order:</strong> <span id="tOrder"></span><br>
+      <strong>Delivery:</strong> <span id="tDelivery"></span><br>
       <strong>Amount paid:</strong> <span id="tTotal"></span>
     </div>
-    <p class="muted">We're preparing your food now and will call you when we're delivering.
+    <p class="muted">We'll prepare your food for your delivery night and call you when we're on the way.
       A receipt has been sent to your email.</p>
     <a class="wa-link hidden" id="waThanks" target="_blank" rel="noopener">Message us on WhatsApp →</a>
     <a class="btn secondary" href="./" id="newOrderBtn">Place another order</a>
@@ -581,6 +618,33 @@
 
   loadDetails();
 
+  // ---- Delivery nights (pre-order) ----
+  // Friday = 5, Saturday = 6. Today is never offered. Dates use Nigerian time, not the phone's clock zone.
+  // (Keep the same as DELIVERY_DAYS / DELIVERY_WEEKS_AHEAD in apps-script.gs.)
+  const DELIVERY_DAYS = [5, 6];
+  const DELIVERY_WEEKS_AHEAD = 4;
+
+  function buildDeliveryOptions() {
+    const DAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos' }).format(new Date()); // YYYY-MM-DD
+    const base = new Date(today + 'T00:00:00Z');
+    // Weeks run Sunday–Saturday, so on a Saturday the next Friday counts as "next week".
+    const weekStart = base.getTime() - base.getUTCDay() * 86400000;
+    const select = $('deliveryDate');
+    for (let i = 1; i <= DELIVERY_WEEKS_AHEAD * 7; i++) {
+      const d = new Date(base.getTime() + i * 86400000);
+      if (!DELIVERY_DAYS.includes(d.getUTCDay())) continue;
+      const week = Math.floor((d.getTime() - weekStart) / (7 * 86400000));
+      const tag = week === 0 ? ' (this week)' : week === 1 ? ' (next week)' : '';
+      const opt = document.createElement('option');
+      opt.value = d.toISOString().slice(0, 10);
+      opt.textContent = DAY[d.getUTCDay()] + ' night, ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + tag;
+      select.append(opt);
+    }
+  }
+  buildDeliveryOptions();
+
   // ---- Place order → Paystack ----
   const form = $('orderForm');
   const submitBtn = $('submitBtn');
@@ -609,6 +673,7 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showFormError('Please enter a valid email address.');
     if (isHostel && !hostel) return showFormError('Please tell us your hostel name.');
     if (!isHostel && !capturedCoords && !address) return showFormError('Please share your location or type your address.');
+    if (!$('deliveryDate').value) return showFormError('Please choose your delivery night (Friday or Saturday).');
     if (!plateCount()) return showFormError('Please choose at least one plate of spag.');
 
     const dishes = {};
@@ -623,6 +688,7 @@
       address: isHostel ? '' : address,
       gps: (!isHostel && capturedCoords) ? (capturedCoords.lat + ',' + capturedCoords.lng) : '',
       dishes,
+      deliveryDate: $('deliveryDate').value,
       extras: [...extraChecks].filter(c => c.checked && !c.disabled).map(c => c.dataset.id),
       declinedGifts: [...giftChecks].filter(c => !c.checked).map(c => c.dataset.id),
       returnUrl: location.origin + location.pathname
@@ -665,6 +731,7 @@
       $('thanksTitle').textContent = 'Thank you for ordering from Pasta Village' + (r.name ? ', ' + r.name.split(' ')[0] : '') + '!';
       $('tCode').textContent = r.code;
       $('tOrder').textContent = (r.dishes || (r.quantity + ' plate(s)')) + (r.extras ? ' + ' + r.extras : '');
+      $('tDelivery').textContent = r.deliveryNight || '—';
       $('tTotal').textContent = currency(r.total);
       setupWhatsApp('waThanks', 'Hi Pasta Village! I just paid for order ' + r.code + '.');
       show('thanksScreen');
