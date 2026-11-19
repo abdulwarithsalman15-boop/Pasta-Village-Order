@@ -128,7 +128,8 @@
   }
   .dish-row:last-child { border-bottom: none; }
   .dish-name { font-weight: 500; font-size: 0.92rem; }
-  .dish-name .price-tag { display: block; }
+  .dish-name .price-tag, .dish-name .dish-desc { display: block; }
+  .dish-desc { font-size: 0.8rem; color: var(--muted); font-weight: 400; }
   .dish-row .qty-row { gap: 8px; flex-shrink: 0; }
   .dish-row .qty-row input { width: 48px; padding: 8px 4px; }
   .summary-row {
@@ -300,21 +301,21 @@
       <h2>Your Order</h2>
       <div class="field">
         <label>Choose your spag</label>
-        <div class="hint" style="margin-bottom:8px;">₦2,500 a plate — comes with free plantain and free delivery.</div>
+        <div class="hint" style="margin-bottom:8px;">₦2,490 a plate — comes with free plantain and free delivery.</div>
         <!-- If you change a dish name or price here, change it in apps-script.gs too (DISHES). -->
         <div class="dish-row">
-          <span class="dish-name">Chicken Stir-fry Spag <span class="price-tag">₦2,500</span></span>
+          <span class="dish-name">Chicken Stir-fry Spag <span class="dish-desc">With chunks of chicken</span> <span class="price-tag">₦2,490</span></span>
           <div class="qty-row">
             <button type="button" class="qty-btn" data-dish="chicken" data-step="-1" aria-label="One less Chicken Stir-fry Spag">−</button>
-            <input type="number" class="dish-qty" id="qtyChicken" data-id="chicken" data-name="Chicken Stir-fry Spag" data-price="2500" value="1" min="0" max="20" readonly aria-label="Chicken Stir-fry Spag plates">
+            <input type="number" class="dish-qty" id="qtyChicken" data-id="chicken" data-name="Chicken Stir-fry Spag" data-price="2490" value="1" min="0" max="20" readonly aria-label="Chicken Stir-fry Spag plates">
             <button type="button" class="qty-btn" data-dish="chicken" data-step="1" aria-label="One more Chicken Stir-fry Spag">+</button>
           </div>
         </div>
         <div class="dish-row">
-          <span class="dish-name">Beef Stir-fry Spag <span class="price-tag">₦2,500</span></span>
+          <span class="dish-name">Beef Stir-fry Spag <span class="dish-desc">With beef slices</span> <span class="price-tag">₦2,490</span></span>
           <div class="qty-row">
             <button type="button" class="qty-btn" data-dish="beef" data-step="-1" aria-label="One less Beef Stir-fry Spag">−</button>
-            <input type="number" class="dish-qty" id="qtyBeef" data-id="beef" data-name="Beef Stir-fry Spag" data-price="2500" value="0" min="0" max="20" readonly aria-label="Beef Stir-fry Spag plates">
+            <input type="number" class="dish-qty" id="qtyBeef" data-id="beef" data-name="Beef Stir-fry Spag" data-price="2490" value="0" min="0" max="20" readonly aria-label="Beef Stir-fry Spag plates">
             <button type="button" class="qty-btn" data-dish="beef" data-step="1" aria-label="One more Beef Stir-fry Spag">+</button>
           </div>
         </div>
@@ -354,12 +355,12 @@
 
     <div class="card">
       <h2>Order Summary</h2>
-      <div id="summaryItems"><div class="summary-row"><span>1 × Chicken Stir-fry Spag</span><span>₦2,500</span></div></div>
+      <div id="summaryItems"><div class="summary-row"><span>1 × Chicken Stir-fry Spag</span><span>₦2,490</span></div></div>
       <div class="summary-row"><span>Delivery</span><span><span class="strike">₦500</span><span class="free-tag">FREE</span></span></div>
-      <div class="summary-row total"><span>Total to Pay</span><span id="totalDisplay">₦2,500</span></div>
+      <div class="summary-row total"><span>Total to Pay</span><span id="totalDisplay">₦2,490</span></div>
     </div>
 
-    <button type="submit" class="btn" id="submitBtn">Pay ₦2,500</button>
+    <button type="submit" class="btn" id="submitBtn">Pay ₦2,490</button>
     <div class="secure-note">🔒 Secure payment by Paystack — card, bank transfer or USSD</div>
     <div class="error" id="formError" role="alert"></div>
   </form>
