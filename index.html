@@ -648,8 +648,37 @@
   }
   buildDeliveryOptions();
 
+  // ---- Visit tracking (for the Stats tab in the Google Sheet) ----
+  // A random code saved on this phone lets us count different PEOPLE, not just page opens.
+  // Nothing personal is sent — only the random code and whether it's their first visit.
+  const VISITOR_KEY = 'pastaVillageVisitor';
+  let visitorId = null, newVisitor = false;
+  try { visitorId = localStorage.getItem(VISITOR_KEY); } catch (e) {}
+  if (!/^[a-z0-9]{8,24}$/.test(visitorId || '')) {
+    visitorId = (Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 16).padEnd(8, '0');
+    newVisitor = true;
+    try { localStorage.setItem(VISITOR_KEY, visitorId); } catch (e) {}
+  }
+
+  function track(step) {
+    try {
+      fetch(SCRIPT_URL, { method: 'POST', keepalive: true,
+        body: JSON.stringify({ action: 'track', step, visitorId, newVisitor }) }).catch(() => {});
+    } catch (e) { /* tracking must never break ordering */ }
+  }
+
+  let startedTracked = false;
+  function trackStart() {
+    if (startedTracked) return;
+    startedTracked = true;
+    track('start');
+  }
+
   // ---- Place order → Paystack ----
   const form = $('orderForm');
+  form.addEventListener('input', trackStart);
+  form.addEventListener('change', trackStart);
+  form.addEventListener('click', e => { if (e.target.closest('.qty-btn')) trackStart(); });
   const submitBtn = $('submitBtn');
   const formError = $('formError');
 
@@ -698,7 +727,8 @@
       deliveryTime: $('deliveryTime').value,
       extras: [...extraChecks].filter(c => c.checked && !c.disabled).map(c => c.dataset.id),
       declinedGifts: [...giftChecks].filter(c => !c.checked).map(c => c.dataset.id),
-      returnUrl: location.origin + location.pathname
+      returnUrl: location.origin + location.pathname,
+      visitorId
     };
 
     saveDetails(); // so next time the form is already filled in
@@ -778,6 +808,7 @@
   const params = new URLSearchParams(location.search);
   const returnedRef = params.get('reference') || params.get('trxref');
   if (returnedRef) confirmPayment(returnedRef.trim().toUpperCase());
+  else track('visit'); // coming back from Paystack is not a new visit
 </script>
 </body>
 </html>
