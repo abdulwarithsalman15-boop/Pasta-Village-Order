@@ -221,17 +221,13 @@
   .contact-btn small { display: block; font-weight: 400; font-size: 0.8rem; margin-top: 2px; opacity: 0.85; }
   .contact-btn.official { background: #25d366; color: #0b3d1f; }
   .contact-btn.ceo { background: #fff; color: var(--brand-dark); border: 1px solid var(--brand); }
-  .qr-box {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 6px;
-    font-size: 0.85rem;
-    color: var(--muted);
+  .req { color: var(--brand); font-weight: 700; }
+  .choice-row { display: flex; gap: 10px; margin-top: 8px; }
+  .choice-row label {
+    flex: 1; display: flex; align-items: center; gap: 8px; margin: 0;
+    padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px;
+    font-weight: 500; font-size: 0.9rem; background: #fff;
   }
-  .qr-box img { width: 120px; height: 120px; flex-shrink: 0; }
-  /* A phone can't scan its own screen, so only show the QR code on bigger screens */
-  @media (max-width: 600px) { .qr-box { display: none; } }
   .spinner {
     width: 36px; height: 36px; margin: 6px auto 12px;
     border: 4px solid var(--border); border-top-color: var(--brand);
@@ -246,7 +242,7 @@
   <header>
     <h1>Pasta Village</h1>
     <p>Everyone is a king — you should eat like one.</p>
-    <p class="preorder-badge">🗓️ Pre-order · We deliver on Friday &amp; Saturday nights</p>
+    <p class="preorder-badge">🗓️ Pre-order · We deliver Thursdays &amp; Fridays, 4pm – 8pm</p>
   </header>
 
   <form id="orderForm" novalidate>
@@ -263,22 +259,23 @@
 
     <div class="card">
       <h2>Your Details</h2>
+      <div class="hint" style="margin:-6px 0 12px;">Fields marked <span class="req">*</span> are compulsory.</div>
       <div class="field">
-        <label for="name">Full Name</label>
+        <label for="name">Full Name <span class="req">*</span></label>
         <input type="text" id="name" autocomplete="name" required>
       </div>
       <div class="field">
-        <label for="phone">Phone Number (for calls)</label>
+        <label for="phone">Phone Number <span class="req">*</span></label>
         <input type="tel" id="phone" placeholder="080..." autocomplete="tel" required>
-        <div class="hint">We'll call this number when we're delivering your order.</div>
+        <div class="hint" style="margin-top:8px;">Is this number for calls, WhatsApp, or both? <span class="req">*</span> Tick all that apply.</div>
+        <div class="choice-row">
+          <label for="phoneCalls"><input type="checkbox" id="phoneCalls"> 📞 Calls</label>
+          <label for="phoneWa"><input type="checkbox" id="phoneWa"> 💬 WhatsApp</label>
+        </div>
+        <div class="hint">We use it for your order confirmation, delivery updates and special offers.</div>
       </div>
       <div class="field">
-        <label for="whatsapp">WhatsApp Number <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
-        <input type="tel" id="whatsapp" placeholder="080...">
-        <div class="hint">So we can send you your order confirmation, delivery updates and special offers.</div>
-      </div>
-      <div class="field">
-        <label for="email">Email Address</label>
+        <label for="email">Email Address <span class="req">*</span></label>
         <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
         <div class="hint">Your payment receipt will be sent here.</div>
       </div>
@@ -300,7 +297,7 @@
 
       <div id="hostelFields" style="margin-top:14px;">
         <div class="field">
-          <label for="hostel">Hostel Name</label>
+          <label for="hostel">Hostel Name <span class="req">*</span></label>
           <input type="text" id="hostel">
         </div>
         <div class="field">
@@ -320,15 +317,25 @@
     </div>
 
     <div class="card">
-      <h2>Delivery Night</h2>
+      <h2>Delivery Day &amp; Time</h2>
       <div class="notice" style="margin-bottom:12px;">
-        <strong>This is a pre-order.</strong> We deliver on <strong>Friday and Saturday nights</strong> only,
-        and we can't deliver on the same day you order — so pick a night from tomorrow onwards.
+        <strong>This is a pre-order.</strong> We deliver on <strong>Thursdays and Fridays</strong>, between
+        <strong>4pm and 8pm</strong>. We can't deliver on the same day you order.
       </div>
       <div class="field">
-        <label for="deliveryDate">When should we deliver?</label>
+        <label for="deliveryDate">Which day? <span class="req">*</span></label>
         <select id="deliveryDate" required>
-          <option value="">Choose a delivery night…</option>
+          <option value="">Choose a delivery day…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="deliveryTime">What time do you want it delivered? <span class="req">*</span></label>
+        <select id="deliveryTime" required>
+          <option value="">Choose a time…</option>
+          <option value="16-17">4pm – 5pm</option>
+          <option value="17-18">5pm – 6pm</option>
+          <option value="18-19">6pm – 7pm</option>
+          <option value="19-20">7pm – 8pm</option>
         </select>
       </div>
     </div>
@@ -336,7 +343,7 @@
     <div class="card">
       <h2>Your Order</h2>
       <div class="field">
-        <label>Choose your spag</label>
+        <label>Choose your spag <span class="req">*</span></label>
         <div class="hint" style="margin-bottom:8px;">₦2,490 a plate — comes with free plantain and free delivery.</div>
         <!-- If you change a dish name or price here, change it in apps-script.gs too (DISHES). -->
         <div class="dish-row">
@@ -419,7 +426,7 @@
       <strong>Delivery:</strong> <span id="tDelivery"></span><br>
       <strong>Amount paid:</strong> <span id="tTotal"></span>
     </div>
-    <p class="muted">We'll prepare your food for your delivery night and call you when we're on the way.
+    <p class="muted">We'll prepare your food and deliver it on your chosen day and time.
       A receipt has been sent to your email.</p>
     <a class="wa-link hidden" id="waThanks" target="_blank" rel="noopener">Message us on WhatsApp →</a>
     <a class="btn secondary" href="./" id="newOrderBtn">Place another order</a>
@@ -453,11 +460,7 @@
       📝 Complaints or suggestions? Message the CEO
       <small>We read every message and want to hear from you</small>
     </a>
-    <div class="qr-box">
-      <img src="whatsapp-qr.png" width="160" height="160" alt="QR code to chat with Pasta Village on WhatsApp">
-      <div>Scan with your phone camera to chat with Pasta Village on WhatsApp</div>
-    </div>
-    <p class="muted" style="margin:12px 0 0;text-align:center;">✉️ thepastavillage@gmail.com · 📍 Aluta market, FUTA</p>
+    <p class="muted" style="margin:12px 0 0;text-align:center;">✉️ thepastavillage@gmail.com · 📍 Directly beside Food Boat, Aluta Market, FUTA</p>
   </div>
 
 </div>
@@ -586,11 +589,13 @@
   // ---- Remember the customer's details on this phone for next time ----
   // Stored only in this browser on the customer's own device; never sent anywhere else.
   const SAVED_KEY = 'pastaVillageDetails';
-  const SAVED_FIELDS = ['name', 'phone', 'whatsapp', 'email', 'hostel', 'room', 'address'];
+  const SAVED_FIELDS = ['name', 'phone', 'email', 'hostel', 'room', 'address'];
+  const SAVED_TICKS = ['phoneCalls', 'phoneWa'];
 
   function saveDetails() {
     const d = { locType: locHostel.checked ? 'hostel' : 'outside' };
     SAVED_FIELDS.forEach(f => { d[f] = $(f).value.trim(); });
+    SAVED_TICKS.forEach(f => { d[f] = $(f).checked; });
     try { localStorage.setItem(SAVED_KEY, JSON.stringify(d)); } catch (e) { /* private mode etc. */ }
   }
 
@@ -599,6 +604,7 @@
     try { d = JSON.parse(localStorage.getItem(SAVED_KEY) || 'null'); } catch (e) { d = null; }
     if (!d || !d.name) return;
     SAVED_FIELDS.forEach(f => { if (typeof d[f] === 'string') $(f).value = d[f]; });
+    SAVED_TICKS.forEach(f => { $(f).checked = d[f] === true; });
     if (d.locType === 'outside' && !$('locOutside').disabled) $('locOutside').checked = true; else locHostel.checked = true;
     toggleLocationFields();
     $('welcomeTitle').textContent = 'Welcome back, ' + d.name.split(' ')[0] + '! 👋';
@@ -609,6 +615,7 @@
   $('forgetBtn').addEventListener('click', () => {
     try { localStorage.removeItem(SAVED_KEY); } catch (e) {}
     SAVED_FIELDS.forEach(f => { $(f).value = ''; });
+    SAVED_TICKS.forEach(f => { $(f).checked = false; });
     locHostel.checked = true;
     toggleLocationFields();
     $('welcomeNote').classList.add('hidden');
@@ -618,28 +625,24 @@
 
   loadDetails();
 
-  // ---- Delivery nights (pre-order) ----
-  // Friday = 5, Saturday = 6. Today is never offered. Dates use Nigerian time, not the phone's clock zone.
-  // (Keep the same as DELIVERY_DAYS / DELIVERY_WEEKS_AHEAD in apps-script.gs.)
-  const DELIVERY_DAYS = [5, 6];
-  const DELIVERY_WEEKS_AHEAD = 4;
+  // ---- Delivery days (pre-order) ----
+  // Thursday = 4, Friday = 5. Only the NEXT Thursday and the NEXT Friday are offered (no booking weeks
+  // ahead), and today is never offered. Dates use Nigerian time, not the phone's clock zone.
+  // (Keep the same as DELIVERY_DAYS in apps-script.gs.)
+  const DELIVERY_DAYS = [4, 5];
 
   function buildDeliveryOptions() {
     const DAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos' }).format(new Date()); // YYYY-MM-DD
     const base = new Date(today + 'T00:00:00Z');
-    // Weeks run Sunday–Saturday, so on a Saturday the next Friday counts as "next week".
-    const weekStart = base.getTime() - base.getUTCDay() * 86400000;
     const select = $('deliveryDate');
-    for (let i = 1; i <= DELIVERY_WEEKS_AHEAD * 7; i++) {
+    for (let i = 1; i <= 7; i++) {
       const d = new Date(base.getTime() + i * 86400000);
       if (!DELIVERY_DAYS.includes(d.getUTCDay())) continue;
-      const week = Math.floor((d.getTime() - weekStart) / (7 * 86400000));
-      const tag = week === 0 ? ' (this week)' : week === 1 ? ' (next week)' : '';
       const opt = document.createElement('option');
       opt.value = d.toISOString().slice(0, 10);
-      opt.textContent = DAY[d.getUTCDay()] + ' night, ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + tag;
+      opt.textContent = DAY[d.getUTCDay()] + ', ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + (i === 1 ? ' (tomorrow)' : '');
       select.append(opt);
     }
   }
@@ -661,7 +664,8 @@
 
     const name = $('name').value.trim();
     const phone = $('phone').value.trim();
-    const whatsapp = $('whatsapp').value.trim();
+    const phoneCalls = $('phoneCalls').checked;
+    const phoneWa = $('phoneWa').checked;
     const email = $('email').value.trim();
     const isHostel = locHostel.checked;
     const hostel = $('hostel').value.trim();
@@ -670,10 +674,12 @@
 
     if (!name) return showFormError('Please fill in your name.');
     if (phone.replace(/\D/g, '').length < 10) return showFormError('Please enter a phone number we can call you on.');
+    if (!phoneCalls && !phoneWa) return showFormError('Please tick whether your phone number is for calls, WhatsApp, or both.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showFormError('Please enter a valid email address.');
     if (isHostel && !hostel) return showFormError('Please tell us your hostel name.');
     if (!isHostel && !capturedCoords && !address) return showFormError('Please share your location or type your address.');
-    if (!$('deliveryDate').value) return showFormError('Please choose your delivery night (Friday or Saturday).');
+    if (!$('deliveryDate').value) return showFormError('Please choose your delivery day (Thursday or Friday).');
+    if (!$('deliveryTime').value) return showFormError('Please choose what time you want your order delivered.');
     if (!plateCount()) return showFormError('Please choose at least one plate of spag.');
 
     const dishes = {};
@@ -681,7 +687,7 @@
 
     const payload = {
       action: 'create',
-      name, phone, whatsapp, email,
+      name, phone, phoneCalls, phoneWa, email,
       locationType: isHostel ? 'Hostel' : 'Outside',
       hostel: isHostel ? hostel : '',
       room: isHostel ? room : '',
@@ -689,6 +695,7 @@
       gps: (!isHostel && capturedCoords) ? (capturedCoords.lat + ',' + capturedCoords.lng) : '',
       dishes,
       deliveryDate: $('deliveryDate').value,
+      deliveryTime: $('deliveryTime').value,
       extras: [...extraChecks].filter(c => c.checked && !c.disabled).map(c => c.dataset.id),
       declinedGifts: [...giftChecks].filter(c => !c.checked).map(c => c.dataset.id),
       returnUrl: location.origin + location.pathname
@@ -731,7 +738,7 @@
       $('thanksTitle').textContent = 'Thank you for ordering from Pasta Village' + (r.name ? ', ' + r.name.split(' ')[0] : '') + '!';
       $('tCode').textContent = r.code;
       $('tOrder').textContent = (r.dishes || (r.quantity + ' plate(s)')) + (r.extras ? ' + ' + r.extras : '');
-      $('tDelivery').textContent = r.deliveryNight || '—';
+      $('tDelivery').textContent = (r.deliveryNight || '—') + (r.deliveryTime ? ', ' + r.deliveryTime : '');
       $('tTotal').textContent = currency(r.total);
       setupWhatsApp('waThanks', 'Hi Pasta Village! I just paid for order ' + r.code + '.');
       show('thanksScreen');
