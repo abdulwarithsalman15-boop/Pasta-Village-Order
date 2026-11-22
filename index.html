@@ -298,7 +298,24 @@
       <div id="hostelFields" style="margin-top:14px;">
         <div class="field">
           <label for="hostel">Hostel Name <span class="req">*</span></label>
-          <input type="text" id="hostel">
+          <!-- To add or remove a hostel, change this list AND the HOSTELS list in apps-script.gs. -->
+          <select id="hostel" required>
+            <option value="">Choose your hostel…</option>
+            <option>Jibowu - Main</option>
+            <option>Jibowu - Annex 1</option>
+            <option>Jibowu - Annex 2</option>
+            <option>Jibowu - Annex 3</option>
+            <option>Awosika</option>
+            <option>Jadesola</option>
+            <option>Adesida</option>
+            <option>Post Graduate Hall</option>
+            <option>Futascoop</option>
+            <option>Akindeko</option>
+            <option>Abiola</option>
+            <option>Adeboye</option>
+            <option>Bisi Balogun</option>
+            <option>Adeniyi</option>
+          </select>
         </div>
         <div class="field">
           <label for="room">Room Number <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
@@ -604,6 +621,7 @@
     try { d = JSON.parse(localStorage.getItem(SAVED_KEY) || 'null'); } catch (e) { d = null; }
     if (!d || !d.name) return;
     SAVED_FIELDS.forEach(f => { if (typeof d[f] === 'string') $(f).value = d[f]; });
+    if ($('hostel').selectedIndex < 0) $('hostel').value = ''; // old typed hostel not in the list
     SAVED_TICKS.forEach(f => { $(f).checked = d[f] === true; });
     if (d.locType === 'outside' && !$('locOutside').disabled) $('locOutside').checked = true; else locHostel.checked = true;
     toggleLocationFields();
@@ -705,7 +723,7 @@
     if (phone.replace(/\D/g, '').length < 10) return showFormError('Please enter a phone number we can call you on.');
     if (!phoneCalls && !phoneWa) return showFormError('Please tick whether your phone number is for calls, WhatsApp, or both.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showFormError('Please enter a valid email address.');
-    if (isHostel && !hostel) return showFormError('Please tell us your hostel name.');
+    if (isHostel && !hostel) return showFormError('Please choose your hostel.');
     if (!isHostel && !capturedCoords && !address) return showFormError('Please share your location or type your address.');
     if (!$('deliveryDate').value) return showFormError('Please choose your delivery day (Thursday or Friday).');
     if (!$('deliveryTime').value) return showFormError('Please choose what time you want your order delivered.');
