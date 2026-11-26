@@ -242,7 +242,7 @@
   <header>
     <h1>Pasta Village</h1>
     <p>Everyone is a king — you should eat like one.</p>
-    <p class="preorder-badge">🗓️ Pre-order · We deliver Thursdays &amp; Fridays, 4pm – 8pm</p>
+    <p class="preorder-badge">🗓️ We deliver Thursdays &amp; Fridays, 4pm – 8pm</p>
   </header>
 
   <form id="orderForm" novalidate>
@@ -336,8 +336,9 @@
     <div class="card">
       <h2>Delivery Day &amp; Time</h2>
       <div class="notice" style="margin-bottom:12px;">
-        <strong>This is a pre-order.</strong> We deliver on <strong>Thursdays and Fridays</strong>, between
-        <strong>4pm and 8pm</strong>. We can't deliver on the same day you order.
+        We deliver on <strong>Thursdays and Fridays</strong>, between <strong>4pm and 8pm</strong>.
+        Ordering on a delivery day? You can still get it <strong>today</strong> — just pick a time at least
+        30 minutes from now.
       </div>
       <div class="field">
         <label for="deliveryDate">Which day? <span class="req">*</span></label>
@@ -643,28 +644,74 @@
 
   loadDetails();
 
-  // ---- Delivery days (pre-order) ----
-  // Thursday = 4, Friday = 5. Only the NEXT Thursday and the NEXT Friday are offered (no booking weeks
-  // ahead), and today is never offered. Dates use Nigerian time, not the phone's clock zone.
-  // (Keep the same as DELIVERY_DAYS in apps-script.gs.)
+  // ---- Delivery days ----
+  // Thursday = 4, Friday = 5. The next two delivery days are offered. TODAY is offered too if it's a
+  // delivery day and a time slot is still open: the slot must start at least SAME_DAY_PREP_MINUTES from
+  // now, and it must be before SAME_DAY_CUTOFF. Nigerian time, not the phone's clock zone.
+  // (Keep the same as DELIVERY_DAYS / SAME_DAY_PREP_MINUTES / SAME_DAY_CUTOFF in apps-script.gs.)
   const DELIVERY_DAYS = [4, 5];
+  const SAME_DAY_PREP_MINUTES = 30;
+  const SAME_DAY_CUTOFF = '20:00';
+
+  function lagosNow() {
+    const parts = {};
+    new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date())
+      .forEach(p => { parts[p.type] = p.value; });
+    return { date: parts.year + '-' + parts.month + '-' + parts.day,
+             mins: Number(parts.hour) * 60 + Number(parts.minute) };
+  }
+
+  function slotOpenToday(key, mins) {
+    const cut = SAME_DAY_CUTOFF.split(':');
+    if (mins >= Number(cut[0]) * 60 + Number(cut[1])) return false;
+    return parseInt(key, 10) * 60 >= mins + SAME_DAY_PREP_MINUTES;
+  }
+
+  function slotKeys() {
+    return [...$('deliveryTime').options].map(o => o.value).filter(Boolean);
+  }
 
   function buildDeliveryOptions() {
     const DAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos' }).format(new Date()); // YYYY-MM-DD
-    const base = new Date(today + 'T00:00:00Z');
+    const now = lagosNow();
+    const base = new Date(now.date + 'T00:00:00Z');
+    const todayOpen = slotKeys().some(k => slotOpenToday(k, now.mins));
     const select = $('deliveryDate');
-    for (let i = 1; i <= 7; i++) {
+    let count = 0;
+    for (let i = 0; i <= 7 && count < 2; i++) {
+      if (i === 0 && !todayOpen) continue;
       const d = new Date(base.getTime() + i * 86400000);
       if (!DELIVERY_DAYS.includes(d.getUTCDay())) continue;
       const opt = document.createElement('option');
       opt.value = d.toISOString().slice(0, 10);
-      opt.textContent = DAY[d.getUTCDay()] + ', ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + (i === 1 ? ' (tomorrow)' : '');
+      opt.textContent = DAY[d.getUTCDay()] + ', ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] +
+        (i === 0 ? ' (today)' : i === 1 ? ' (tomorrow)' : '');
       select.append(opt);
+      count++;
     }
   }
+
+  // For today, grey out delivery times that are too soon.
+  function updateTimeOptions() {
+    const now = lagosNow();
+    const isToday = $('deliveryDate').value === now.date;
+    const timeSel = $('deliveryTime');
+    [...timeSel.options].forEach(o => {
+      if (!o.value) return;
+      if (!o.dataset.label) o.dataset.label = o.textContent;
+      const closed = isToday && !slotOpenToday(o.value, now.mins);
+      o.disabled = closed;
+      o.textContent = o.dataset.label + (closed ? ' — too late for today' : '');
+    });
+    if (timeSel.selectedOptions[0] && timeSel.selectedOptions[0].disabled) timeSel.value = '';
+  }
   buildDeliveryOptions();
+  $('deliveryDate').addEventListener('change', updateTimeOptions);
+  $('deliveryTime').addEventListener('focus', updateTimeOptions);
+  $('deliveryTime').addEventListener('mousedown', updateTimeOptions);
+  updateTimeOptions();
 
   // ---- Visit tracking (for the Stats tab in the Google Sheet) ----
   // A random code saved on this phone lets us count different PEOPLE, not just page opens.
